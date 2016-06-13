@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1032557119948",
+    "firebase_url": "https://euro-2016-b26b3.firebaseio.com",
+    "project_id": "euro-2016-b26b3",
+    "storage_bucket": "euro-2016-b26b3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032557119948:android:d1049e74798a164d",
+        "android_client_info": {
+          "package_name": "com.example.phamngoctuan.euro2016"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1032557119948-n70npemc5bqfk98c8pvcdhtnusgqpnn2.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1032557119948-jhf2e2ln15b19jsrrki76op4k4gt7m6l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTE_sw0AnAZ_2Xff4u5dbgVr7-x-bRJBA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
