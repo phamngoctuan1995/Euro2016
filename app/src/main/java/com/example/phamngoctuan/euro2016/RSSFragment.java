@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jsoup.Jsoup;
+import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,9 +93,11 @@ public class RSSFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 class AsyncDownloadRSS extends AsyncTask<String, Void, Void>
 {
     WeakReference<RSSAdapter> rssAdapterWeakReference;
+    Handler handler;
     AsyncDownloadRSS(RSSAdapter adapter)
     {
         rssAdapterWeakReference = new WeakReference<RSSAdapter>(adapter);
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -105,20 +109,30 @@ class AsyncDownloadRSS extends AsyncTask<String, Void, Void>
             Document doc = builder.parse(_link);
             Element root= doc.getDocumentElement();
             NodeList items = root.getElementsByTagName("item");
-             RSSAdapter adapter = rssAdapterWeakReference.get();
+             final RSSAdapter adapter = rssAdapterWeakReference.get();
+
             if (adapter == null)
                 return null;
 
-//            for (int i = 0; i < items.getLength(); ++i)
-//            {
-//                Node item = items.item(i);
-//                NodeList childs = item.getChildNodes();
-//                String title = childs.item(1).getTextContent();
-//                String link = childs.item(7).getTextContent();
-//                Node description = childs.item(3);
-//                String content = description.getTextContent();
-//                Node image = description.getChildNodes().item(1);
-//            }
+            for (int i = 0; i < items.getLength(); ++i)
+            {
+                Node item = items.item(i);
+                NodeList childs = item.getChildNodes();
+                String title = childs.item(1).getTextContent();
+                String link = childs.item(7).getTextContent();
+                Element description = (Element) childs.item(3);
+                String temp = description.getTextContent().trim();
+                org.jsoup.nodes.Document document = Jsoup.parse(temp);
+                String img = document.getElementsByTag("img").get(0).attr("src");
+                String content = document.text();
+                final News news = new News(title, content, img, link);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.addNews(news);
+                    }
+                });
+            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

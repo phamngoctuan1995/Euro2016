@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
     {
         _tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         _tabLayout.addTab(_tabLayout.newTab().setText("News"));
+//        _tabLayout.addTab(_tabLayout.newTab().setText("Tab1"));
+//        _tabLayout.addTab(_tabLayout.newTab().setText("Tab2"));
         _tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         _pagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), _tabLayout.getTabCount());
