@@ -3,7 +3,7 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
-    android:paddingTop="8dp"
+    android:paddingTop="6dp"
     >
 
     <android.support.v7.widget.CardView
@@ -35,7 +35,7 @@
                 android:layout_toRightOf="@+id/news_thumb"
                 android:layout_alignParentTop="true"
                 android:textSize="13sp"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:text="Title"
                 />
 

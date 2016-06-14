@@ -8,26 +8,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.jsoup.Jsoup;
-import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -61,13 +54,8 @@ public class RSSFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         _refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
         _refreshLayout.setColorSchemeColors(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
         _refreshLayout.setOnRefreshListener(this);
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         new AsyncDownloadRSS(_adapter).execute("http://www.24h.com.vn/upload/rss/euro2016.rss");
+        return rootView;
     }
 
     @Override
