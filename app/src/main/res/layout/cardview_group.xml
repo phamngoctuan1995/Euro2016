@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="10dp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/cv">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent">
+
+            <TextView
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_name"
+                android:textSize="17sp"
+                android:layout_centerVertical="true"
+                android:text="123"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                />
+            <TextView
+                android:layout_width="26dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_played"
+                android:layout_toRightOf="@+id/group_name"
+                android:layout_centerVertical="true"
+                android:textSize="15sp"
+                android:textColor="#ffffff"
+                android:text="P"
+                android:layout_marginLeft="6dp"
+                />
+            <TextView
+                android:layout_width="26dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_won"
+                android:layout_toRightOf="@+id/group_played"
+                android:textSize="15sp"
+                android:layout_centerVertical="true"
+                android:text="W"
+                android:textColor="#ffffff"
+                android:layout_marginLeft="6dp"
+                />
+            <TextView
+                android:layout_width="26dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_drawn"
+                android:layout_toRightOf="@+id/group_won"
+                android:textSize="15sp"
+                android:text="D"
+                android:textColor="#ffffff"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="6dp"
+                />
+            <TextView
+                android:layout_width="26dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_lost"
+                android:layout_toRightOf="@+id/group_drawn"
+                android:layout_centerInParent="true"
+                android:textSize="15sp"
+                android:text="L"
+                android:textColor="#ffffff"
+                android:layout_marginLeft="6dp"
+                />
+            <TextView
+                android:layout_width="26dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_points"
+                android:layout_toRightOf="@+id/group_lost"
+                android:layout_centerInParent="true"
+                android:textSize="15sp"
+                android:textColor="#ffffff"
+                android:text="Pts"
+                android:layout_marginLeft="6dp"
+                />
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

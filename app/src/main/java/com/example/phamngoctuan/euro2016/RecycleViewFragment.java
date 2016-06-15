@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
@@ -29,15 +30,22 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Created by phamngoctuan on 13/06/2016.
  */
-public class RSSFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class RecycleViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     RecyclerView _rcv;
     SwipeRefreshLayout _refreshLayout;
-    RSSAdapter _adapter;
+    RecyclerView.Adapter _adapter = null;
+    int _type;
+
+    RecycleViewFragment(RecyclerView.Adapter adapter, int type)
+    {
+        _adapter = adapter;
+        _type = type;
+    }
 
     void setAdapter()
     {
-        _adapter = new RSSAdapter(getContext());
-        _rcv.setAdapter(_adapter);
+        if (_adapter != null)
+            _rcv.setAdapter(_adapter);
     }
 
     @Override
@@ -54,7 +62,9 @@ public class RSSFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         _refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh);
         _refreshLayout.setColorSchemeColors(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
         _refreshLayout.setOnRefreshListener(this);
-        new AsyncDownloadRSS(_adapter).execute("http://www.24h.com.vn/upload/rss/euro2016.rss");
+
+        if (_type == MyConstant.RSSNEWS)
+            doOnRefresh();
         return rootView;
     }
 
@@ -73,8 +83,18 @@ public class RSSFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
     public void doOnRefresh()
     {
-        _adapter.deleteAllNews();
-        new AsyncDownloadRSS(_adapter).execute("http://www.24h.com.vn/upload/rss/euro2016.rss");
+        if (_type == MyConstant.RSSNEWS)
+        {
+            RSSAdapter adapter = (RSSAdapter)_adapter;
+            adapter.deleteAllNews();
+            new AsyncDownloadRSS(adapter).execute("http://www.24h.com.vn/upload/rss/euro2016.rss");
+        }
+        else
+        {
+            ScoreboardAdapter adapter = (ScoreboardAdapter)_adapter;
+            adapter.deleteAll();
+            new ScoreboardAsync(null, adapter).execute();
+        }
     }
 }
 
@@ -97,7 +117,7 @@ class AsyncDownloadRSS extends AsyncTask<String, Void, Void>
             Document doc = builder.parse(_link);
             Element root= doc.getDocumentElement();
             NodeList items = root.getElementsByTagName("item");
-             final RSSAdapter adapter = rssAdapterWeakReference.get();
+            final RSSAdapter adapter = rssAdapterWeakReference.get();
 
             if (adapter == null)
                 return null;

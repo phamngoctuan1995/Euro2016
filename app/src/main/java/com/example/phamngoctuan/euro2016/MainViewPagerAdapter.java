@@ -1,27 +1,41 @@
 package com.example.phamngoctuan.euro2016;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 /**
  * Created by phamngoctuan on 13/06/2016.
  */
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
+    WeakReference<Context> contextWeakReference;
 
-    public MainViewPagerAdapter(FragmentManager fm, int NumOfTabs)
+    public MainViewPagerAdapter(FragmentManager fm, Context context, int NumOfTabs)
     {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
+        contextWeakReference = new WeakReference<Context>(context);
     }
 
     @Override
     public Fragment getItem(int position)
     {
+        Context context = contextWeakReference.get();
+        if (context == null)
+            return null;
+
         switch (position) {
             case 0:
-                return new RSSFragment();
+                RSSAdapter _adapter = new RSSAdapter(context);
+                return new RecycleViewFragment(_adapter, MyConstant.RSSNEWS);
+            case 1:
+                ScoreboardAdapter _adapter1 = new ScoreboardAdapter(context);
+                return new RecycleViewFragment(_adapter1, MyConstant.SCOREBOARD);
             default:
                 return null;
         }
