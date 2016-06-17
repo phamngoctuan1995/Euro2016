@@ -30,12 +30,13 @@ class TeamInfo {
 }
 
 class PlayerInfo {
-    String _name, _info, _position, _dateofbirth, _club;
+    String _name, _info, _role, _dateofbirth, _club, _image, _matchP;
     int _number, _height, _weigth;
 
     PlayerInfo()
     {
-        _name = _info = _position = _dateofbirth = _club = "";
+        _name = _info = _role = _dateofbirth
+                = _club = _image = _matchP = "";
         _number = _height = _weigth = 0;
     }
 }

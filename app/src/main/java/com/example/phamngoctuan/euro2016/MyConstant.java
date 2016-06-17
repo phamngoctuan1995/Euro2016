@@ -9,6 +9,7 @@ import java.util.HashMap;
  */
 public class MyConstant {
     static public ArrayList<GroupInfo> _scoreBoard;
+    static public ArrayList<News> _listNews;
 
     static public int RSSNEWS = 0;
     static public int SCOREBOARD = 1;

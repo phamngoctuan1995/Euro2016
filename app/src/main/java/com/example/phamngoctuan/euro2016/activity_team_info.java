@@ -12,20 +12,19 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
-public class MainActivity extends AppCompatActivity {
+public class activity_team_info extends AppCompatActivity {
     private ViewPager _viewPager;
     private TabLayout _tabLayout;
     FragmentStatePagerAdapter _pagerAdapter;
+    int _teamId;
 
     private void initViewPager()
     {
         _tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        _tabLayout.addTab(_tabLayout.newTab().setText("News"));
-        _tabLayout.addTab(_tabLayout.newTab().setText("Scoreboard"));
-//        _tabLayout.addTab(_tabLayout.newTab().setText("Tab2"));
+        _tabLayout.addTab(_tabLayout.newTab().setText("Players"));
         _tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        _pagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this, _tabLayout.getTabCount());
+        _pagerAdapter = new TeamViewPagerAdapter(getSupportFragmentManager(), this, _tabLayout.getTabCount(), _teamId);
 
         // Set up the ViewPager with the sections adapter.
         _viewPager = (ViewPager) findViewById(R.id.container);
@@ -53,18 +52,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FirebaseMessaging.getInstance().subscribeToTopic("euro2016");
 
         Intent intent = null;
         intent = getIntent();
         if (intent != null)
         {
-
+            _teamId = intent.getIntExtra("teamid", -1);
+            if (_teamId == -1)
+                finish();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         initViewPager();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
     }
 }
