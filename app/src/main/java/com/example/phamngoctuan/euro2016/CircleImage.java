@@ -58,12 +58,12 @@ public class CircleImage extends ImageView {
         shader = new BitmapShader(original,
                 Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
 
-        Paint paint = new Paint();
-        paint.setARGB(255, 145, 170, 157);
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius, paint);
+//        Paint paint = new Paint();
+//        paint.setARGB(255, 145, 170, 157);
+//        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius, paint);
 
-        paint = new Paint();
+        Paint paint = new Paint();
         paint.setShader(shader);
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius - 3, paint);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius, paint);
     }
 }

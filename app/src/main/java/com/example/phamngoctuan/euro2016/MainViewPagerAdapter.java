@@ -36,6 +36,9 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 ScoreboardAdapter _adapter1 = new ScoreboardAdapter(context);
                 return new RecycleViewFragment(_adapter1);
+            case 2:
+                MatchAdapter _adapter2 = new MatchAdapter(context);
+                return new RecycleViewFragment(_adapter2);
             default:
                 return null;
         }

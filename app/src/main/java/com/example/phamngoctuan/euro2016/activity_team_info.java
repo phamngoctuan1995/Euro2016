@@ -22,7 +22,6 @@ public class activity_team_info extends AppCompatActivity {
     {
         _tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         _tabLayout.addTab(_tabLayout.newTab().setText("Players"));
-        _tabLayout.addTab(_tabLayout.newTab().setText("Match"));
         _tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         _pagerAdapter = new TeamViewPagerAdapter(getSupportFragmentManager(), this, _tabLayout.getTabCount(), _teamId);

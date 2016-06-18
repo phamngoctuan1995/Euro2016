@@ -70,6 +70,7 @@ public class activity_splash extends AppCompatActivity implements ScoreboardCall
         flag.put("Germany", R.drawable.germany);
         flag.put("Poland", R.drawable.poland);
         flag.put("Northern Ireland", R.drawable.northireland);
+        flag.put("N.Ireland", R.drawable.northireland);
         flag.put("Ukraine", R.drawable.ukraine);
         flag.put("Spain", R.drawable.spain);
         flag.put("Croatia", R.drawable.croatia);
@@ -78,6 +79,7 @@ public class activity_splash extends AppCompatActivity implements ScoreboardCall
         flag.put("Italy", R.drawable.italy);
         flag.put("Sweden", R.drawable.sweden);
         flag.put("Republic of Ireland", R.drawable.ireland);
+        flag.put("Ireland", R.drawable.ireland);
         flag.put("Belgium", R.drawable.belgium);
         flag.put("Hungary", R.drawable.hungaria);
         flag.put("Portugal", R.drawable.portugal);

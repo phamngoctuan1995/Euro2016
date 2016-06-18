@@ -35,9 +35,6 @@ public class TeamViewPagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 TeamPlayerAdapter _adapter = new TeamPlayerAdapter(context, _teamId);
                 return new RecycleViewFragment(_adapter);
-            case 1:
-                MatchAdapter _adapter1 = new MatchAdapter(context);
-                return new RecycleViewFragment(_adapter1);
             default:
                 return null;
         }
