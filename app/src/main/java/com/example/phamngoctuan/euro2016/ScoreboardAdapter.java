@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -20,7 +21,8 @@ import java.util.ArrayList;
 /**
  * Created by phamngoctuan on 13/06/2016.
  */
-public class ScoreboardAdapter extends RecyclerView.Adapter implements onItemClickInterface {
+
+public class ScoreboardAdapter extends RecyclerView.Adapter implements RecycleAdapterInterface, ScoreboardCallback {
     WeakReference<Context> _contextWeakReference;
 
     ScoreboardAdapter(Context context)
@@ -62,17 +64,11 @@ public class ScoreboardAdapter extends RecyclerView.Adapter implements onItemCli
         {
             GroupViewHolder groupViewHolder = (GroupViewHolder)holder;
             groupViewHolder._name.setText(groupInfo._name);
-            groupViewHolder._cv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    OnItemClickListener(v, position);
-                }
-            });
         }
         else
         {
             TeamViewHolder teamViewHolder = (TeamViewHolder) holder;
-            TeamInfo teamInfo = groupInfo._teams.get(position - 5 * groupIndex - 1);
+            TeamInfo teamInfo = groupInfo._teams.get(position % 5 - 1);
             teamViewHolder._name.setText(teamInfo._name);
             teamViewHolder._played.setText("" + teamInfo._played);
             teamViewHolder._won.setText("" + teamInfo._won);
@@ -83,7 +79,7 @@ public class ScoreboardAdapter extends RecyclerView.Adapter implements onItemCli
             teamViewHolder._cv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    OnItemClickListener(v, position);
+                    onItemClickListener(v, position);
                 }
             });
         }
@@ -101,13 +97,6 @@ public class ScoreboardAdapter extends RecyclerView.Adapter implements onItemCli
         return count;
     }
 
-    @Override
-    public void OnItemClickListener(View v, int position) {
-        Context context = _contextWeakReference.get();
-        if (context == null)
-            return;
-    }
-
     void setScoreboard(ArrayList<GroupInfo> scb)
     {
         MyConstant._scoreBoard = scb;
@@ -118,6 +107,34 @@ public class ScoreboardAdapter extends RecyclerView.Adapter implements onItemCli
     {
         MyConstant._scoreBoard.clear();
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemClickListener(View v, int position) {
+        Context context = _contextWeakReference.get();
+        if (context != null) {
+            Intent intent = new Intent(context, activity_team_info.class);
+            intent.putExtra("teamid", position);
+            context.startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        deleteAll();
+        new ScoreboardAsync(this).execute();
+    }
+
+    @Override
+    public void onLoadScoreboardSuccess(ArrayList<GroupInfo> scb) {
+        setScoreboard(scb);
+    }
+
+    @Override
+    public void onLoadScoreboardFail() {
+        Context context = _contextWeakReference.get();
+        if (context != null)
+            Toast.makeText(context, "Fail to load Scoreboard", Toast.LENGTH_SHORT).show();
     }
 
     public static class TeamViewHolder extends RecyclerView.ViewHolder

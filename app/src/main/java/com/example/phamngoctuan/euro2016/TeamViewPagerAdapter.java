@@ -11,15 +11,17 @@ import java.util.ArrayList;
 /**
  * Created by phamngoctuan on 13/06/2016.
  */
-public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
+public class TeamViewPagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
     WeakReference<Context> contextWeakReference;
+    int _teamId;
 
-    public MainViewPagerAdapter(FragmentManager fm, Context context, int NumOfTabs)
+    public TeamViewPagerAdapter(FragmentManager fm, Context context, int NumOfTabs, int id)
     {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
         contextWeakReference = new WeakReference<Context>(context);
+        _teamId = id;
     }
 
     @Override
@@ -31,11 +33,8 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                RSSAdapter _adapter = new RSSAdapter(context);
+                TeamPlayerAdapter _adapter = new TeamPlayerAdapter(context, _teamId);
                 return new RecycleViewFragment(_adapter);
-            case 1:
-                ScoreboardAdapter _adapter1 = new ScoreboardAdapter(context);
-                return new RecycleViewFragment(_adapter1);
             default:
                 return null;
         }
@@ -47,7 +46,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position)
         {
             case 0:
-                return "News";
+                return "Players";
             default:
                 return "Tab";
         }

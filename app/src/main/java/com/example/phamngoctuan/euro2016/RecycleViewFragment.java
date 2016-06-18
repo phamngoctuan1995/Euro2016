@@ -1,6 +1,5 @@
 package com.example.phamngoctuan.euro2016;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,21 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.net.MalformedURLException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 /**
  * Created by phamngoctuan on 13/06/2016.
  */
@@ -34,12 +18,10 @@ public class RecycleViewFragment extends Fragment implements SwipeRefreshLayout.
     RecyclerView _rcv;
     SwipeRefreshLayout _refreshLayout;
     RecyclerView.Adapter _adapter = null;
-    int _type;
 
-    RecycleViewFragment(RecyclerView.Adapter adapter, int type)
+    RecycleViewFragment(RecyclerView.Adapter adapter)
     {
         _adapter = adapter;
-        _type = type;
     }
 
     void setAdapter()
@@ -63,8 +45,6 @@ public class RecycleViewFragment extends Fragment implements SwipeRefreshLayout.
         _refreshLayout.setColorSchemeColors(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
         _refreshLayout.setOnRefreshListener(this);
 
-        if (_type == MyConstant.RSSNEWS)
-            doOnRefresh();
         return rootView;
     }
 
@@ -83,74 +63,7 @@ public class RecycleViewFragment extends Fragment implements SwipeRefreshLayout.
 
     public void doOnRefresh()
     {
-        if (_type == MyConstant.RSSNEWS)
-        {
-            RSSAdapter adapter = (RSSAdapter)_adapter;
-            adapter.deleteAllNews();
-            new AsyncDownloadRSS(adapter).execute("http://www.24h.com.vn/upload/rss/euro2016.rss");
-        }
-        else
-        {
-            ScoreboardAdapter adapter = (ScoreboardAdapter)_adapter;
-            adapter.deleteAll();
-            new ScoreboardAsync(null, adapter).execute();
-        }
-    }
-}
-
-class AsyncDownloadRSS extends AsyncTask<String, Void, Void>
-{
-    WeakReference<RSSAdapter> rssAdapterWeakReference;
-    Handler handler;
-    AsyncDownloadRSS(RSSAdapter adapter)
-    {
-        rssAdapterWeakReference = new WeakReference<RSSAdapter>(adapter);
-        handler = new Handler(Looper.getMainLooper());
-    }
-
-    @Override
-    protected Void doInBackground(String... params) {
-        String _link = params[0];
-        try {
-            DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = fac.newDocumentBuilder();
-            Document doc = builder.parse(_link);
-            Element root= doc.getDocumentElement();
-            NodeList items = root.getElementsByTagName("item");
-            final RSSAdapter adapter = rssAdapterWeakReference.get();
-
-            if (adapter == null)
-                return null;
-
-            for (int i = 0; i < items.getLength(); ++i)
-            {
-                Node item = items.item(i);
-                NodeList childs = item.getChildNodes();
-                String title = childs.item(1).getTextContent();
-                String link = childs.item(7).getTextContent();
-                Element description = (Element) childs.item(3);
-                String temp = description.getTextContent().trim();
-                org.jsoup.nodes.Document document = Jsoup.parse(temp);
-                String img = document.getElementsByTag("img").get(0).attr("src");
-                String content = document.text();
-                final News news = new News(title, content, img, link);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.addNews(news);
-                    }
-                });
-            }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        }
-        return null;
+        RecycleAdapterInterface adapterInterface = (RecycleAdapterInterface)_adapter;
+        adapterInterface.onRefresh();
     }
 }

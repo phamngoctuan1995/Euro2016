@@ -2,6 +2,8 @@ package com.example.phamngoctuan.euro2016;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -10,32 +12,38 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 
-public class activity_splash extends AppCompatActivity implements ScoreBoardCallback{
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+public class activity_splash extends AppCompatActivity implements ScoreboardCallback, RSSCallback{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        new ScoreboardAsync(this, null).execute();
+        new ScoreboardAsync(this).execute();
     }
 
     @Override
-    public void onSuccess(ArrayList<GroupInfo> scb) {
+    public void onLoadScoreboardSuccess(ArrayList<GroupInfo> scb) {
         MyConstant._scoreBoard = scb;
-        initFlag();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        new AsyncDownloadRSS(this).execute("http://www.24h.com.vn/upload/rss/euro2016.rss");
     }
 
     @Override
-    public void onFail() {
+    public void onLoadScoreboardFail() {
         finish();
     }
 
@@ -75,21 +83,32 @@ public class activity_splash extends AppCompatActivity implements ScoreBoardCall
 
         MyConstant._flag = flag;
     }
+
+    @Override
+    public void onLoadRSSSuccess(ArrayList<News> listNews) {
+        MyConstant._listNews = listNews;
+        initFlag();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onLoadRSSFail() {
+        finish();
+    }
 }
 
-interface ScoreBoardCallback {
-    void onSuccess(ArrayList<GroupInfo> scb);
-    void onFail();
+interface ScoreboardCallback {
+    void onLoadScoreboardSuccess(ArrayList<GroupInfo> scb);
+    void onLoadScoreboardFail();
 }
 
 class ScoreboardAsync extends AsyncTask<Void, Void, ArrayList<GroupInfo>>
 {
-    WeakReference<ScoreBoardCallback> _callbackRef;
-    WeakReference<ScoreboardAdapter> _adapterRef;
-    ScoreboardAsync(ScoreBoardCallback callback, ScoreboardAdapter adapter)
+    WeakReference<ScoreboardCallback> _callbackRef;
+    ScoreboardAsync(ScoreboardCallback callback)
     {
-        _callbackRef = new WeakReference<ScoreBoardCallback>(callback);
-        _adapterRef = new WeakReference<ScoreboardAdapter>(adapter);
+        _callbackRef = new WeakReference<ScoreboardCallback>(callback);
     }
 
     @Override
@@ -132,20 +151,73 @@ class ScoreboardAsync extends AsyncTask<Void, Void, ArrayList<GroupInfo>>
     @Override
     protected void onPostExecute(ArrayList<GroupInfo> groupInfos) {
         super.onPostExecute(groupInfos);
-        ScoreBoardCallback _callback = _callbackRef.get();
+        ScoreboardCallback _callback = _callbackRef.get();
         if (_callback != null) {
             if (groupInfos != null)
-                _callback.onSuccess(groupInfos);
+                _callback.onLoadScoreboardSuccess(groupInfos);
             else
-                _callback.onFail();
+                _callback.onLoadScoreboardFail();
         }
-        else
-        {
-            if (groupInfos != null) {
-                ScoreboardAdapter adapter = _adapterRef.get();
-                if (adapter != null)
-                    adapter.setScoreboard(groupInfos);
+    }
+}
+
+interface RSSCallback {
+    void onLoadRSSSuccess(ArrayList<News> listNews);
+    void onLoadRSSFail();
+}
+
+class AsyncDownloadRSS extends AsyncTask<String, Void, ArrayList<News>>
+{
+    WeakReference<RSSCallback> _callbackWeakReference;
+    AsyncDownloadRSS(RSSCallback callback)
+    {
+        _callbackWeakReference = new WeakReference<RSSCallback>(callback);
+    }
+
+    @Override
+    protected ArrayList<News> doInBackground(String... params) {
+        String _link = params[0];
+        ArrayList<News> _listNews = null;
+
+        try {
+            DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = fac.newDocumentBuilder();
+            org.w3c.dom.Document doc = builder.parse(_link);
+            org.w3c.dom.Element root= doc.getDocumentElement();
+            NodeList items = root.getElementsByTagName("item");
+
+            _listNews = new ArrayList<>();
+            for (int i = 0; i < items.getLength(); ++i)
+            {
+                Node item = items.item(i);
+                NodeList childs = item.getChildNodes();
+                String title = childs.item(1).getTextContent();
+                String link = childs.item(7).getTextContent();
+                org.w3c.dom.Element description = (org.w3c.dom.Element) childs.item(3);
+                String temp = description.getTextContent().trim();
+                org.jsoup.nodes.Document document = Jsoup.parse(temp);
+                String img = document.getElementsByTag("img").get(0).attr("src");
+                String content = document.text();
+                News news = new News(title, content, img, link);
+                _listNews.add(news);
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return _listNews;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<News> newses) {
+        super.onPostExecute(newses);
+        RSSCallback callback = _callbackWeakReference.get();
+        if (callback != null) {
+            if (newses == null)
+                callback.onLoadRSSFail();
+            else
+                callback.onLoadRSSSuccess(newses);
         }
     }
 }
