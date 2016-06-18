@@ -38,7 +38,8 @@ public class TeamPlayerAdapter extends RecyclerView.Adapter implements RecycleAd
         _contextWeakReference = new WeakReference<Context>(context);
         _position = pos;
         _teamInfo = MyConstant._scoreBoard.get(pos / 5)._teams.get(pos % 5 - 1);
-        onRefresh();
+        if (_teamInfo._players.size() == 0)
+            new TeamPlayerAsync(this).execute(_teamInfo._info);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class TeamPlayerAdapter extends RecyclerView.Adapter implements RecycleAd
     @Override
     public void onRefresh() {
         deleteAll();
-        new TeamPlayerAsync(this).execute("http://www.uefa.com" + _teamInfo._info);
+        new TeamPlayerAsync(this).execute(_teamInfo._info);
     }
 
     @Override
@@ -144,7 +145,7 @@ class TeamPlayerAsync extends AsyncTask<String, Void, ArrayList<PlayerInfo>> {
         ArrayList<PlayerInfo> _listPlayers = null;
         try {
             _listPlayers = new ArrayList<>();
-            Document document = Jsoup.connect(params[0]).get();
+            Document document = Jsoup.connect("http://www.uefa.com" + params[0]).get();
 
             Elements players = document.getElementsByClass("squad--team-player");
             for (Element player : players)
