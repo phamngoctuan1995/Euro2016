@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         _tabLayout.addTab(_tabLayout.newTab().setText("News"));
         _tabLayout.addTab(_tabLayout.newTab().setText("Scoreboard"));
         _tabLayout.addTab(_tabLayout.newTab().setText("Match"));
-//        _tabLayout.addTab(_tabLayout.newTab().setText("Tab2"));
+        _tabLayout.addTab(_tabLayout.newTab().setText("Top Players"));
         _tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         _pagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), this, _tabLayout.getTabCount());

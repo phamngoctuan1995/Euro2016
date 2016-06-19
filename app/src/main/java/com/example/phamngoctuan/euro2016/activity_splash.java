@@ -29,7 +29,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class activity_splash extends AppCompatActivity implements ScoreboardCallback, RSSCallback{
+public class activity_splash extends AppCompatActivity implements ScoreboardCallback, RSSCallback, MatchCallback, TopPlayersCallback{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,9 @@ public class activity_splash extends AppCompatActivity implements ScoreboardCall
 
     @Override
     public void onLoadScoreboardFail() {
-        finish();
+        Toast.makeText(this, "Fail to load Scoreboard", Toast.LENGTH_SHORT).show();
+        MyConstant._scoreBoard = new ArrayList<>();
+        new AsyncDownloadRSS(this).execute("http://www.24h.com.vn/upload/rss/euro2016.rss");
     }
 
     @Override
@@ -92,14 +94,44 @@ public class activity_splash extends AppCompatActivity implements ScoreboardCall
     @Override
     public void onLoadRSSSuccess(ArrayList<News> listNews) {
         MyConstant._listNews = listNews;
+        new MatchAsync(this).execute();
+    }
+
+    @Override
+    public void onLoadRSSFail() {
+        MyConstant._listNews = new ArrayList<>();
+        Toast.makeText(this, "Fail to load news", Toast.LENGTH_SHORT).show();
+        new MatchAsync(this).execute();
+    }
+
+    @Override
+    public void onLoadMatchSuccess(ArrayList<Match> arr) {
+        MyConstant._listMatch = arr;
+        new TopPlayersAsync(this).execute();
+    }
+
+    @Override
+    public void onLoadMatchFail() {
+        MyConstant._listMatch = new ArrayList<>();
+        Toast.makeText(this, "Fail to load match", Toast.LENGTH_SHORT).show();
+        new TopPlayersAsync(this).execute();
+    }
+
+    @Override
+    public void onLoadTopPlayerSuccess(ArrayList<TopPlayers> arr) {
+        MyConstant._topPlayer = arr;
         initFlag();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     @Override
-    public void onLoadRSSFail() {
-        finish();
+    public void onLoadTopPlayerFail() {
+        MyConstant._topPlayer = new ArrayList<>();
+        Toast.makeText(this, "Fail to load top player", Toast.LENGTH_SHORT).show();
+        initFlag();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
 
@@ -225,4 +257,116 @@ class AsyncDownloadRSS extends AsyncTask<String, Void, ArrayList<News>>
                 callback.onLoadRSSSuccess(newses);
         }
     }
+}
+
+class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
+    WeakReference<MatchCallback> _callBackWeakReference;
+
+    MatchAsync(MatchCallback cb) {
+        _callBackWeakReference = new WeakReference<MatchCallback>(cb);
+    }
+    @Override
+    protected ArrayList<Match> doInBackground(String... params) {
+        ArrayList<Match> _match = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect("http://www.livescore.com/euro/fixtures/").get();
+            Elements ele = doc.getElementsByClass("content").first().children();
+            for (int i = 1; i < ele.size() - 1; ++i)
+            {
+                Element node = ele.get(i);
+                Match match = new Match();
+                match._date = node.getElementsByClass("col-2").get(1).text();
+                Element clearfix = node.getElementsByClass("clearfix").first();
+                match._time = clearfix.child(0).text();
+                Element team = clearfix.child(1).child(0);
+                String link = team.attr("href");
+                match._link = "http://android.livescore.com/#/soccer/details/" + link.substring(link.indexOf('=') + 1);
+                String t = team.text();
+                String[] teamName = t.split(" vs ");
+                match._team1Name = teamName[0];
+                match._team2Name = teamName[1];
+                match._result = node.getElementsByClass("col-1").first().text();
+                _match.add(match);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return _match;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<Match> matches) {
+        super.onPostExecute(matches);
+        MatchCallback _callBack = _callBackWeakReference.get();
+
+        if (_callBack != null) {
+            if (matches == null)
+                _callBack.onLoadMatchFail();
+            else
+                _callBack.onLoadMatchSuccess(matches);
+        }
+    }
+}
+
+interface MatchCallback {
+    void onLoadMatchSuccess(ArrayList<Match> arr);
+    void onLoadMatchFail();
+}
+
+class TopPlayersAsync extends AsyncTask<Void, Void, ArrayList<TopPlayers>> {
+    TopPlayersCallback _callBack;
+
+    TopPlayersAsync(TopPlayersCallback cb) {
+        _callBack = cb;
+    }
+    @Override
+    protected ArrayList<TopPlayers> doInBackground(Void... params) {
+        ArrayList<TopPlayers> _topPlayers = new ArrayList<>();
+
+        try {
+            Document doc = Jsoup.connect("http://www.uefa.com/uefaeuro/season=2016/statistics/").get();
+            Elements tops = doc.getElementsByClass("card-content");
+            for (int i = 4; i < tops.size(); ++i)
+            {
+                Element top = tops.get(i);
+                TopPlayers topPlayer = new TopPlayers();
+                topPlayer._type = top.child(0).text();
+
+                Elements players = top.child(1).getElementsByTag("li");
+                ArrayList<PlayerInfo> _playersInfo = new ArrayList<>();
+                for (Element player : players)
+                {
+                    PlayerInfo playerInfo = new PlayerInfo();
+                    playerInfo._image = player.child(0).attr("src");
+                    Element a = player.child(1).getElementsByTag("a").first();
+                    playerInfo._info = "http://www.uefa.com" + a.attr("href");
+                    playerInfo._name = a.text();
+                    playerInfo._number = Integer.parseInt(player.child(2).text());
+                    _playersInfo.add(playerInfo);
+                }
+
+                topPlayer._players = _playersInfo;
+                _topPlayers.add(topPlayer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return _topPlayers;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<TopPlayers> tops) {
+        super.onPostExecute(tops);
+        if (tops == null)
+            _callBack.onLoadTopPlayerFail();
+        else
+            _callBack.onLoadTopPlayerSuccess(tops);
+    }
+}
+
+interface TopPlayersCallback {
+    void onLoadTopPlayerSuccess(ArrayList<TopPlayers> arr);
+    void onLoadTopPlayerFail();
 }

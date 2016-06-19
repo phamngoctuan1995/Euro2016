@@ -1,5 +1,7 @@
 package com.example.phamngoctuan.euro2016;
 
+import android.util.Pair;
+
 import java.util.ArrayList;
 
 /**
@@ -30,13 +32,25 @@ class TeamInfo {
 }
 
 class PlayerInfo {
-    String _name, _info, _role, _dateofbirth, _club, _image, _matchP;
-    int _number, _height, _weigth;
+    String _name, _info, _role, _image, _matchP;
+    int _number;
+    ArrayList<Pair<String, String>> _attr;
 
     PlayerInfo()
     {
-        _name = _info = _role = _dateofbirth
-                = _club = _image = _matchP = "";
-        _number = _height = _weigth = 0;
+        _name = _info = _role = _image = _matchP = "";
+        _number = 0;
+        _attr = new ArrayList<>();
+    }
+}
+
+class TopPlayers {
+    String _type;
+    ArrayList<PlayerInfo> _players;
+
+    TopPlayers()
+    {
+        _type = "";
+        _players = new ArrayList<>();
     }
 }
