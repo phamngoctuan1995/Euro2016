@@ -66,11 +66,14 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
         MatchViewHolder matchViewHolder = (MatchViewHolder) holder;
         matchViewHolder._team1Name.setText(matchInfo._team1Name);
         matchViewHolder._team2Name.setText(matchInfo._team2Name);
-        if (matchInfo._time.equals("FT"))
+        if (matchInfo._result.charAt(0) != '?') {
             matchViewHolder._result.setText(matchInfo._result);
-        else
+            matchViewHolder._date.setText(matchInfo._time);
+        }
+        else {
             matchViewHolder._result.setText(matchInfo._time);
-        matchViewHolder._date.setText(matchInfo._date);
+            matchViewHolder._date.setText(matchInfo._date);
+        }
         Picasso.with(context).load(MyConstant._flag.get(matchInfo._team1Name)).into(matchViewHolder._team1Thumb);
         Picasso.with(context).load(MyConstant._flag.get(matchInfo._team2Name)).into(matchViewHolder._team2Thumb);
         matchViewHolder._cv.setOnClickListener(new View.OnClickListener() {

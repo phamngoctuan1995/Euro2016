@@ -15,7 +15,6 @@ import android.webkit.WebViewClient;
 public class activity_webview extends AppCompatActivity {
     WebView _webview;
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +29,9 @@ public class activity_webview extends AppCompatActivity {
             {
                 _webview.getSettings().setUserAgentString("Android");
                 _webview.getSettings().setJavaScriptEnabled(true);
-                _webview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    _webview.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
+                }
                 _webview.setWebViewClient(new WebViewClient());
                 _webview.loadUrl(_link);
             }
