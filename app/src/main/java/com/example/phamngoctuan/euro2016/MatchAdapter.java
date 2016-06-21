@@ -74,8 +74,14 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
             matchViewHolder._result.setText(matchInfo._time);
             matchViewHolder._date.setText(matchInfo._date);
         }
-        Picasso.with(context).load(MyConstant._flag.get(matchInfo._team1Name)).into(matchViewHolder._team1Thumb);
-        Picasso.with(context).load(MyConstant._flag.get(matchInfo._team2Name)).into(matchViewHolder._team2Thumb);
+        if (MyConstant._flag.containsKey(matchInfo._team1Name))
+            Picasso.with(context).load(MyConstant._flag.get(matchInfo._team1Name)).into(matchViewHolder._team1Thumb);
+        else
+            Picasso.with(context).load(R.drawable.vietnam).into(matchViewHolder._team1Thumb);
+        if (MyConstant._flag.containsKey(matchInfo._team2Name))
+            Picasso.with(context).load(MyConstant._flag.get(matchInfo._team2Name)).into(matchViewHolder._team2Thumb);
+        else
+            Picasso.with(context).load(R.drawable.vietnam).into(matchViewHolder._team2Thumb);
         matchViewHolder._cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

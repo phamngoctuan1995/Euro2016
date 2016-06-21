@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.leakcanary.LeakCanary;
 
 import org.jsoup.Jsoup;
@@ -35,6 +36,7 @@ public class activity_splash extends AppCompatActivity implements ScoreboardCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LeakCanary.install(getApplication());
+        FirebaseMessaging.getInstance().subscribeToTopic("euro2016");
         setContentView(R.layout.activity_splash);
         new ScoreboardAsync(this).execute();
     }
@@ -274,6 +276,8 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
             for (int i = 1; i < ele.size() - 1; ++i)
             {
                 Element node = ele.get(i);
+                if (node.className().equals("row row-tall mt4"))
+                    continue;
                 Match match = new Match();
                 match._date = node.getElementsByClass("col-2").get(1).text();
                 Element clearfix = node.getElementsByClass("clearfix").first();
