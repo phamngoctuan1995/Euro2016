@@ -287,6 +287,10 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                 match._link = "http://android.livescore.com/#/soccer/details/" + link.substring(link.indexOf('=') + 1);
                 String t = team.text();
                 String[] teamName = t.split(" vs ");
+                for (int ii = 0; ii < 2; ++ii) {
+                    if (teamName[ii].charAt(teamName[ii].length() - 1) == '*')
+                        teamName[ii] = teamName[ii].substring(0, teamName[ii].length() - 2);
+                }
                 match._team1Name = teamName[0];
                 match._team2Name = teamName[1];
                 match._result = node.getElementsByClass("col-1").first().text();
