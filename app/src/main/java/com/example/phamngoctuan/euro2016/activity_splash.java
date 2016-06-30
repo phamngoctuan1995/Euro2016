@@ -289,6 +289,25 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                     int hours = Integer.parseInt(match._time.split(":")[0]);
                     int minutes = Integer.parseInt(match._time.split(":")[1]);
                     hours += 7;
+                    if (hours >= 24)
+                    {
+                        int day = Integer.parseInt(match._date.split(" ")[1]);
+                        String month = match._date.split(" ")[0];
+                        if (day == 30 && month.equals("June"))
+                        {
+                            day = 1;
+                            month = "July";
+                        }
+                        else
+                            if (day == 31 && month.equals("July"))
+                            {
+                                day = 1;
+                                month = "August";
+                            }
+                        else
+                                day += 1;
+                        match._date = month + " " + day;
+                    }
                     hours %= 24;
                     String h = "" + hours;
                     String m = "" + minutes;
