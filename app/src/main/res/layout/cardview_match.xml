@@ -60,7 +60,8 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_centerVertical="true"
                 android:gravity="right"
-                android:paddingRight="5dp"/>
+                android:paddingRight="5dp"
+                android:textStyle="bold"/>
 
             <com.example.phamngoctuan.euro2016.CircleImage
                 android:layout_width="40dp"
@@ -81,7 +82,8 @@
                 android:layout_toRightOf="@+id/team2_thumb"
                 android:layout_centerVertical="true"
                 android:gravity="left"
-                android:paddingLeft="5dp"/>
+                android:paddingLeft="5dp"
+                android:textStyle="bold"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

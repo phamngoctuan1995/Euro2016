@@ -132,7 +132,7 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
         Context context = _contextWeakReference.get();
         Match match = MyConstant._listMatch.get(position);
         if (context != null) {
-            if (match._time.equals("FT") || match._time.equals("AET"))
+            if (match.isStarted())
             {
                 Intent intent = new Intent(context, activity_webview.class);
                 intent.putExtra("link", match._link);
