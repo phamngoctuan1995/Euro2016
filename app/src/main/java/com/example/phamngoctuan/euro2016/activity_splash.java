@@ -292,7 +292,7 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                 match._result = node.getElementsByClass("col-1").first().text();
                 _match.add(match);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -353,7 +353,7 @@ class TopPlayersAsync extends AsyncTask<Void, Void, ArrayList<TopPlayers>> {
                 topPlayer._players = _playersInfo;
                 _topPlayers.add(topPlayer);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
