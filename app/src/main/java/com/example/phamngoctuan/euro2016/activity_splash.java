@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 
@@ -267,6 +269,7 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
     MatchAsync(MatchCallback cb) {
         _callBackWeakReference = new WeakReference<MatchCallback>(cb);
     }
+
     @Override
     protected ArrayList<Match> doInBackground(String... params) {
         ArrayList<Match> _match = new ArrayList<>();
@@ -287,10 +290,6 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                 match._link = "http://android.livescore.com/#/soccer/details/" + link.substring(link.indexOf('=') + 1);
                 String t = team.text();
                 String[] teamName = t.split(" vs ");
-                for (int ii = 0; ii < 2; ++ii) {
-                    if (teamName[ii].charAt(teamName[ii].length() - 1) == '*')
-                        teamName[ii] = teamName[ii].substring(0, teamName[ii].length() - 2);
-                }
                 match._team1Name = teamName[0];
                 match._team2Name = teamName[1];
                 match._result = node.getElementsByClass("col-1").first().text();
@@ -300,6 +299,48 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
             e.printStackTrace();
             return null;
         }
+
+        // sort match
+        Collections.sort(_match, new Comparator<Match>() {
+            @Override
+            public int compare(Match lhs, Match rhs) {
+                if (lhs.isFinished() && !rhs.isFinished())
+                    return 1;
+                if (!lhs.isFinished() && rhs.isFinished())
+                    return -1;
+                String[] date1 = lhs._date.split(" ");
+                String[] date2 = rhs._date.split(" ");
+
+                // Compare month. This is for June and July only!!!
+                // TODO: modify if to be used for other competitions
+                int tmp = date1[0].compareTo(date2[0]);
+                if (tmp != 0)
+                    return -tmp;
+
+                if (date1[1].compareTo(date2[1]) != 0) {
+                    int d1 = Integer.parseInt(date1[1]);
+                    int d2 = Integer.parseInt(date2[1]);
+                    if (d1 < d2)
+                        return -1;
+                    if (d1 > d2)
+                        return 1;
+                }
+
+                if (lhs.isStarted() && !rhs.isStarted())
+                    return -1;
+                if (!lhs.isStarted() && rhs.isStarted())
+                    return 1;
+
+                if (lhs.isFinished() && rhs.isFinished())
+                    return 0;
+
+                tmp = lhs._time.compareTo(rhs._time);
+                if (tmp != 0)
+                    return tmp;
+                return 0;
+            }
+        });
+
         return _match;
     }
 

@@ -37,6 +37,14 @@ class Match {
     {
         _team1Name = _team2Name = _result = _date = _link = _time = "";
     }
+
+    public boolean isFinished() {
+        return (_time.compareTo("AET") == 0 || _time.compareTo("FT") == 0);
+    }
+
+    public boolean isStarted() {
+        return (_result.charAt(0) != '?');
+    }
 }
 
 public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapterInterface, MatchCallback {
@@ -74,14 +82,22 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
             matchViewHolder._result.setText(matchInfo._time);
             matchViewHolder._date.setText(matchInfo._date);
         }
-        if (MyConstant._flag.containsKey(matchInfo._team1Name))
-            Picasso.with(context).load(MyConstant._flag.get(matchInfo._team1Name)).into(matchViewHolder._team1Thumb);
+        String tmp = matchInfo._team1Name;
+        if (tmp.charAt(tmp.length() - 1) == '*')
+            tmp = tmp.substring(0, tmp.length() - 2);
+        if (MyConstant._flag.containsKey(tmp))
+            Picasso.with(context).load(MyConstant._flag.get(tmp)).into(matchViewHolder._team1Thumb);
         else
             Picasso.with(context).load(R.drawable.vietnam).into(matchViewHolder._team1Thumb);
-        if (MyConstant._flag.containsKey(matchInfo._team2Name))
-            Picasso.with(context).load(MyConstant._flag.get(matchInfo._team2Name)).into(matchViewHolder._team2Thumb);
+
+        tmp = matchInfo._team2Name;
+        if (tmp.charAt(tmp.length() - 1) == '*')
+            tmp = tmp.substring(0, tmp.length() - 2);
+        if (MyConstant._flag.containsKey(tmp))
+            Picasso.with(context).load(MyConstant._flag.get(tmp)).into(matchViewHolder._team2Thumb);
         else
             Picasso.with(context).load(R.drawable.vietnam).into(matchViewHolder._team2Thumb);
+
         matchViewHolder._cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
