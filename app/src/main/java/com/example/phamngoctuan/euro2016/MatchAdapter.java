@@ -183,7 +183,7 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
     private void createAndShowAlertDialog(final Context context, final Match match) {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Want to set alarm at " + match._time);
+            builder.setTitle("Want to set alarm at " + match._time + "?");
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     String[] times = match._time.split(":");

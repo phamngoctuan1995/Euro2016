@@ -285,6 +285,19 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                 match._date = node.getElementsByClass("col-2").get(1).text();
                 Element clearfix = node.getElementsByClass("clearfix").first();
                 match._time = clearfix.child(0).text();
+                if (!match._time.equals("FT") && !match._time.equals("AET")) {
+                    int hours = Integer.parseInt(match._time.split(":")[0]);
+                    int minutes = Integer.parseInt(match._time.split(":")[1]);
+                    hours += 7;
+                    hours %= 24;
+                    String h = "" + hours;
+                    String m = "" + minutes;
+                    if (h.length() == 1)
+                        h = "0" + h;
+                    if (m.length() == 1)
+                        m = "0" + m;
+                    match._time = h + ":" + m;
+                }
                 Element team = clearfix.child(1).child(0);
                 String link = team.attr("href");
                 match._link = "http://android.livescore.com/#/soccer/details/" + link.substring(link.indexOf('=') + 1);
