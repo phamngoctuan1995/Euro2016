@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
     {
         _tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         _tabLayout.addTab(_tabLayout.newTab().setText("News"));
-        _tabLayout.addTab(_tabLayout.newTab().setText("Scoreboard"));
-        _tabLayout.addTab(_tabLayout.newTab().setText("Match"));
+        _tabLayout.addTab(_tabLayout.newTab().setText("Groups"));
+        _tabLayout.addTab(_tabLayout.newTab().setText("Matches"));
         _tabLayout.addTab(_tabLayout.newTab().setText("Top Players"));
         _tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
