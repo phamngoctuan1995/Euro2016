@@ -1,9 +1,12 @@
 package com.example.phamngoctuan.euro2016;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.provider.AlarmClock;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +26,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.sql.Time;
 import java.util.ArrayList;
 
 /**
@@ -104,7 +108,6 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
                 onItemClickListener(v, position);
             }
         });
-
     }
 
     @Override
@@ -129,9 +132,15 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
         Context context = _contextWeakReference.get();
         Match match = MyConstant._listMatch.get(position);
         if (context != null) {
-            Intent intent = new Intent(context, activity_webview.class);
-            intent.putExtra("link", match._link);
-            context.startActivity(intent);
+            if (match._time.equals("FT") || match._time.equals("AET"))
+            {
+                Intent intent = new Intent(context, activity_webview.class);
+                intent.putExtra("link", match._link);
+                context.startActivity(intent);
+            }
+            else {
+                createAndShowAlertDialog(context, match);
+            }
         }
     }
 
@@ -168,6 +177,37 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
             _date = (TextView) itemView.findViewById(R.id.date);
             _team1Thumb = (ImageView) itemView.findViewById(R.id.team1_thumb);
             _team2Thumb = (ImageView) itemView.findViewById(R.id.team2_thumb);
+        }
+    }
+
+    private void createAndShowAlertDialog(final Context context, final Match match) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Want to set alarm at " + match._time);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    String[] times = match._time.split(":");
+                    int hours = Integer.parseInt(times[0]);
+                    int minutes = Integer.parseInt(times[1]);
+
+                    Intent openNewAlarm = new Intent(AlarmClock.ACTION_SET_ALARM);
+                    openNewAlarm.putExtra(AlarmClock.EXTRA_HOUR, hours);
+                    openNewAlarm.putExtra(AlarmClock.EXTRA_MINUTES, minutes);
+                    context.startActivity(openNewAlarm);
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        catch (Exception e)
+        {
+            Log.d("debug", "Error dialog: " + e.getMessage());
         }
     }
 }
