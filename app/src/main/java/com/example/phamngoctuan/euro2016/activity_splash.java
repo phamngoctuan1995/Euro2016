@@ -404,7 +404,7 @@ class TopPlayersAsync extends AsyncTask<Void, Void, ArrayList<TopPlayers>> {
                     Element a = player.child(1).getElementsByTag("a").first();
                     playerInfo._info = "http://www.uefa.com" + a.attr("href");
                     playerInfo._name = a.text();
-                    playerInfo._number = Integer.parseInt(player.child(2).text());
+                    playerInfo._number = (int)Double.parseDouble(player.child(2).text());
                     _playersInfo.add(playerInfo);
                 }
 
