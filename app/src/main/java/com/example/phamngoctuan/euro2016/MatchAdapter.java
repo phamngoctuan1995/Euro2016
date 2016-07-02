@@ -34,12 +34,13 @@ import java.util.ArrayList;
  */
 
 class Match {
+    String _stage;
     String _team1Name, _team2Name;
     String _result, _date, _time, _link;
 
     Match()
     {
-        _team1Name = _team2Name = _result = _date = _link = _time = "";
+        _stage = _team1Name = _team2Name = _result = _date = _link = _time = "";
     }
 
     public boolean isFinished() {
@@ -76,6 +77,7 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
 
         Match matchInfo = MyConstant._listMatch.get(position);
         MatchViewHolder matchViewHolder = (MatchViewHolder) holder;
+        matchViewHolder._stage.setText(matchInfo._stage);
         matchViewHolder._team1Name.setText(matchInfo._team1Name);
         matchViewHolder._team2Name.setText(matchInfo._team2Name);
         if (matchInfo._result.charAt(0) != '?') {
@@ -165,12 +167,13 @@ public class MatchAdapter extends RecyclerView.Adapter implements RecycleAdapter
     public static class MatchViewHolder extends RecyclerView.ViewHolder
     {
         CardView _cv;
-        TextView _team1Name, _team2Name, _result, _date;
+        TextView _team1Name, _team2Name, _result, _date, _stage;
         ImageView _team1Thumb, _team2Thumb;
 
         MatchViewHolder(View itemView) {
             super(itemView);
             _cv = (CardView) itemView.findViewById(R.id.cv);
+            _stage = (TextView) itemView.findViewById(R.id.stage);
             _team1Name = (TextView) itemView.findViewById(R.id.team1_name);
             _team2Name = (TextView) itemView.findViewById(R.id.team2_name);
             _result = (TextView) itemView.findViewById(R.id.result);

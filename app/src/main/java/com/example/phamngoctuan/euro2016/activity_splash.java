@@ -282,10 +282,12 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                 if (node.className().equals("row row-tall mt4"))
                     continue;
                 Match match = new Match();
+                match._stage = node.getElementsByClass("col-8").first().text();
                 match._date = node.getElementsByClass("col-2").get(1).text();
                 Element clearfix = node.getElementsByClass("clearfix").first();
                 match._time = clearfix.child(0).text();
-                if (!match._time.equals("FT") && !match._time.equals("AET")) {
+                match._result = node.getElementsByClass("col-1").first().text();
+                if (!match.isStarted()) {
                     int hours = Integer.parseInt(match._time.split(":")[0]);
                     int minutes = Integer.parseInt(match._time.split(":")[1]);
                     hours += 7;
@@ -324,7 +326,6 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                 String[] teamName = t.split(" vs ");
                 match._team1Name = teamName[0];
                 match._team2Name = teamName[1];
-                match._result = node.getElementsByClass("col-1").first().text();
                 _match.add(match);
             }
         } catch (Exception e) {
@@ -340,35 +341,11 @@ class MatchAsync extends AsyncTask<String, Void, ArrayList<Match>> {
                     return 1;
                 if (!lhs.isFinished() && rhs.isFinished())
                     return -1;
-                String[] date1 = lhs._date.split(" ");
-                String[] date2 = rhs._date.split(" ");
-
-                // Compare month. This is for June and July only!!!
-                // TODO: modify if to be used for other competitions
-                int tmp = date1[0].compareTo(date2[0]);
-                if (tmp != 0)
-                    return -tmp;
-
-                if (date1[1].compareTo(date2[1]) != 0) {
-                    int d1 = Integer.parseInt(date1[1]);
-                    int d2 = Integer.parseInt(date2[1]);
-                    if (d1 < d2)
-                        return -1;
-                    if (d1 > d2)
-                        return 1;
-                }
-
                 if (lhs.isStarted() && !rhs.isStarted())
                     return -1;
                 if (!lhs.isStarted() && rhs.isStarted())
                     return 1;
 
-                if (lhs.isFinished() && rhs.isFinished())
-                    return 0;
-
-                tmp = lhs._time.compareTo(rhs._time);
-                if (tmp != 0)
-                    return tmp;
                 return 0;
             }
         });
